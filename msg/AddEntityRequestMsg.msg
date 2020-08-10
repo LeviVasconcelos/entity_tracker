@@ -1,5 +1,5 @@
 # Initialize Tracker
 Header header
-CompressedImage img
+sensor_msgs/CompressedImage img
 string label
-float32 roi[]
+float32[] roi

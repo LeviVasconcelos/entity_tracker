@@ -1,4 +1,4 @@
 # Entities Frame
 Header header
-CompressedImage img
-TrackEntity entities[]
+sensor_msgs/CompressedImage img
+TrackEntityMsg[] entities
