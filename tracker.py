@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding:utf-8 -*-
 import sys
 import cv2
 import time
@@ -73,8 +75,8 @@ class RosTracker:
         self.image_topic = image_topic
         self.add_topic = add_topic
         self.image_sub = rospy.Subscriber(self.image_topic, CompressedImage, self._callback, queue_size=5)
-        self.add_tracker_sub = rospy.Subscriber(self.add_topic, AddTracker, self._callback_add_tracker, queue_size=1)
-        self.track_pub = rospy.Publisher(śelf.publish_topic, EntitiesFrame)
+        self.add_tracker_sub = rospy.Subscriber(self.add_topic, AddEntityRequestMsg, self._callback_add_tracker, queue_size=1)
+        self.track_pub = rospy.Publisher(self.publish_topic, EntitiesFrameMsg)
 
     def _callback(self, data):
         #### direct conversion to CV2 ####
@@ -87,7 +89,7 @@ class RosTracker:
     def _callback_add_tracker(self,  ros_data):
         np_arr = np.fromstring(ros_data.img, np.uint8)
         entity = TrackEntityCSRT(ros_data.roi, ros_data.label, np_arr)
-        self.tracker.AddEntity(entity)
+        self.tracker.addEntity(entity)
 
 if __name__ == "__main__":
     image_topic = "/head_front_camera/image_raw/compressed"
@@ -97,5 +99,5 @@ if __name__ == "__main__":
     rospy.init_node('entity_tracker', anonymous=True)
     try:
         rospy.spin()
-    except: KeyboardInterrupt:
+    except KeyboardInterrupt:
         print("Shutting down ROS Entity Tracker module")
