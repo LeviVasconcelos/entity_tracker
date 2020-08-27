@@ -78,13 +78,13 @@ class RosTracker:
         self.add_tracker_sub = rospy.Subscriber(self.add_topic, AddEntityRequestMsg, self._callback_add_tracker, queue_size=1)
         self.track_pub = rospy.Publisher(self.publish_topic, EntitiesFrameMsg)
 
-    def _callback(self, data):
+    def _callback(self, ros_data):
         #### direct conversion to CV2 ####
         np_arr = np.fromstring(ros_data.data, np.uint8)
         #image_np = cv2.imdecode(np_arr, cv2.CV_LOAD_IMAGE_COLOR)
         image_np = cv2.imdecode(np_arr, cv2.IMREAD_COLOR) # OpenCV >= 3.0:
         self.tracker.update(image_np)
-        self.track_pub(self.tracker.toRosMessage(image_np))
+        self.track_pub.publish(self.tracker.toRosMessage(image_np))
 
     def _callback_add_tracker(self,  ros_data):
         np_arr = np.fromstring(ros_data.img, np.uint8)
