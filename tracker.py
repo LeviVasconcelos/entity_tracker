@@ -1,15 +1,15 @@
 import sys
 import cv2
 import time
+
 # Ros libraries
 import roslib
 import rospy
+
 # Ros Messages
 from sensor_msgs.msg import CompressedImage
 from entity_tracker.msg import AddEntityRequestMsg, EntitiesFrameMsg, TrackEntityMsg
-
 import numpy as np
-
 
 class TrackEntity:
     def __init__(self, roi, label, frame):
@@ -44,7 +44,6 @@ class TrackEntityCSRT(TrackEntity):
         TrackEntity.__init__(self, roi, label, frame)
         self.tracker = cv2.TrackerCSRT_create()
         self.tracker.init(frame, roi)
-
 
 class Tracker:
     def __init__(self):
