@@ -2,5 +2,5 @@
 string label 
 bool success
 float32[] roi
-integer lostframes
+int32 lostframes
 
