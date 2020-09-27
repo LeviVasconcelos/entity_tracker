@@ -91,9 +91,9 @@ class RosTracker:
         self.tracker.addEntity(entity)
 
 if __name__ == "__main__":
-    image_topic = "/head_front_camera/image_raw/compressed"
-    add_topic = "/tracker/add"
-    publish_topic = "/tracker/entities"
+    image_topic = "/tracker/input/compressed"
+    add_topic = "/tracker/input/add"
+    publish_topic = "/tracker/output/entities"
     tracker = RosTracker(image_topic, add_topic, publish_topic)
     rospy.init_node('entity_tracker', anonymous=True)
     try:
