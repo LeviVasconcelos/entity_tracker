@@ -25,6 +25,8 @@ class TrackEntity:
     def update(self, frame):
         if self.tracker is not None:
             (self.success, self.roi) = self.tracker.update(frame)
+            rospy.loginfo("[TRACKER] updating entity %s", self.label)
+            rospy.loginfo(str(self.roi))
             if self.success:
                 self.lostFrames = 0
             else:
@@ -38,7 +40,7 @@ class TrackEntity:
         msg.label = self.label
         msg.success = self.success
         msg.roi = self.roi
-        msg.lostFrames = self.lostFrames
+        msg.lostframes = self.lostFrames
         return msg
 
 class TrackEntityCSRT(TrackEntity):
@@ -87,9 +89,14 @@ class RosTracker:
         self.track_pub.publish(self.tracker.toRosMessage(image_np))
 
     def _callback_add_tracker(self,  ros_data):
+        # roi should be (x,y,w,h) format
         rospy.loginfo("[entity_tracker] Adding a new entity for tracking") 
-        np_arr = np.fromstring(ros_data.img, np.uint8)
-        entity = TrackEntityCSRT(ros_data.roi, ros_data.label, np_arr)
+        np_arr = np.fromstring(ros_data.img.data, np.uint8)
+        image = cv2.imdecode(np_arr, cv2.IMREAD_COLOR) # OpenCV >= 3.0:
+        rospy.loginfo("added roi: " + str(ros_data.roi))
+        rospy.loginfo("img dims: " + str(image.shape)) 
+        entity = TrackEntityCSRT(ros_data.roi, ros_data.label, image)
+        rospy.loginfo("entry initialized" )
         self.tracker.addEntity(entity)
 
 if __name__ == "__main__":
