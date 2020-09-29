@@ -78,6 +78,7 @@ class RosTracker:
         self.track_pub = rospy.Publisher(self.publish_topic, EntitiesFrameMsg)
 
     def _callback(self, ros_data):
+        rospy.loginfo("[entity_tracker] image received, tracking entities")
         #### direct conversion to CV2 ####
         np_arr = np.fromstring(ros_data.data, np.uint8)
         #image_np = cv2.imdecode(np_arr, cv2.CV_LOAD_IMAGE_COLOR)
@@ -86,6 +87,7 @@ class RosTracker:
         self.track_pub.publish(self.tracker.toRosMessage(image_np))
 
     def _callback_add_tracker(self,  ros_data):
+        rospy.loginfo("[entity_tracker] Adding a new entity for tracking") 
         np_arr = np.fromstring(ros_data.img, np.uint8)
         entity = TrackEntityCSRT(ros_data.roi, ros_data.label, np_arr)
         self.tracker.addEntity(entity)
@@ -94,8 +96,9 @@ if __name__ == "__main__":
     image_topic = "/tracker/input/compressed"
     add_topic = "/tracker/input/add"
     publish_topic = "/tracker/output/entities"
-    tracker = RosTracker(image_topic, add_topic, publish_topic)
     rospy.init_node('entity_tracker', anonymous=True)
+    tracker = RosTracker(image_topic, add_topic, publish_topic)
+    rospy.loginfo("[entity_tracker] Tracker initialized!")
     try:
         rospy.spin()
     except KeyboardInterrupt:
